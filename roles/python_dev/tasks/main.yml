@@ -1,0 +1,3 @@
+---
+- import_tasks: install_python.yml
+- import_tasks: install_vscode_extensions.yml

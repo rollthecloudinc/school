@@ -1,0 +1,13 @@
+---
+python_version: "3.9.5"
+pyenv_root: "{{ ansible_env.HOME }}/.pyenv"
+vs_code_extensions:
+  - ms-python.python
+  - ms-toolsai.jupyter
+  - ms-vscode.cpptools
+  - ms-vscode-remote.remote-containers
+  - ms-vscode-remote.remote-ssh
+  - ms-vscode-remote.remote-ssh-edit
+  - ms-vscode-remote.remote-wsl
+  - esbenp.prettier-vscode
+  - ms-azuretools.vscode-docker

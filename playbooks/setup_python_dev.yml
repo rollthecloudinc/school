@@ -1,0 +1,6 @@
+---
+- name: Setup Python Development Environment
+  hosts: all
+  become: yes
+  roles:
+    - role: python_dev

@@ -1,0 +1,59 @@
+---
+- name: Update and install dependencies
+  apt:
+    update_cache: yes
+    name:
+      - make
+      - build-essential
+      - libssl-dev
+      - zlib1g-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - wget
+      - curl
+      - llvm
+      - libncurses5-dev
+      - libncursesw5-dev
+      - xz-utils
+      - tk-dev
+      - libffi-dev
+      - liblzma-dev
+      - python3-openssl
+      - git
+    state: present
+
+- name: Install pyenv
+  shell: curl https://pyenv.run | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.pyenv"
+
+- name: Set up pyenv environment variables in .bashrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: |
+      export PATH="$HOME/.pyenv/bin:$PATH"
+      eval "$(pyenv init --path)"
+      eval "$(pyenv init -)"
+      eval "$(pyenv virtualenv-init -)"
+    create: yes
+
+- name: Reload .bashrc to apply pyenv to current session
+  shell: source {{ ansible_env.HOME }}/.bashrc
+  args:
+    executable: /bin/bash
+
+- name: Install Python version using pyenv
+  shell: "{{ ansible_env.HOME }}/.pyenv/bin/pyenv install {{ python_version }}"
+  environment:
+    PYENV_ROOT: "{{ ansible_env.HOME }}/.pyenv"
+    PATH: "{{ ansible_env.HOME }}/.pyenv/bin:{{ ansible_env.PATH }}"
+  args:
+    creates: "{{ ansible_env.HOME }}/.pyenv/versions/{{ python_version }}"
+
+- name: Set global Python version using pyenv
+  shell: "{{ ansible_env.HOME }}/.pyenv/bin/pyenv global {{ python_version }}"
+  environment:
+    PYENV_ROOT: "{{ ansible_env.HOME }}/.pyenv"
+    PATH: "{{ ansible_env.HOME }}/.pyenv/bin:{{ ansible_env.PATH }}"
+
