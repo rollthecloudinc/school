@@ -1,0 +1,46 @@
+---
+- name: Ensure apt-transport-https and lsb-release are installed
+  apt:
+    name:
+      - apt-transport-https
+      - lsb-release
+      - gnupg
+    state: present
+    update_cache: yes
+
+- name: Wait for apt lock to be released
+  shell: "while fuser /var/lib/apt/lists/lock /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock >/dev/null 2>&1; do sleep 1; done"
+  become: yes
+
+- name: Clear package cache
+  file:
+    path: /var/cache/apt/pkgcache.bin
+    state: absent
+  become: yes
+
+- name: Clear source package cache
+  file:
+    path: /var/cache/apt/srcpkgcache.bin
+    state: absent
+  become: yes
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: Download Microsoft signing key
+  apt_key:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    state: present
+
+- name: Add Azure CLI software repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli {{ ansible_distribution_release }} main"
+    state: present
+    update_cache: yes
+
+- name: Install Azure CLI
+  apt:
+    name: azure-cli
+    state: present
