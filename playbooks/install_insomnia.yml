@@ -1,0 +1,6 @@
+---
+- name: Install Insomnia REST Client
+  hosts: localhost
+  become: yes
+  roles:
+    - insomnia

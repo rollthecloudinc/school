@@ -1,0 +1,29 @@
+---
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - wget
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - software-properties-common
+    state: present
+    update_cache: yes
+
+- name: Download Insomnia .deb package
+  get_url:
+    url: https://github.com/Kong/insomnia/releases/download/core%402021.5.3/Insomnia.Core-2021.5.3.deb
+    dest: /tmp/insomnia.deb
+
+- name: Install Insomnia
+  command: dpkg -i /tmp/insomnia.deb
+  register: dpkg_result
+  ignore_errors: true
+
+- name: Fix missing dependencies if any
+  apt:
+    update_cache: yes
+    force_apt_get: yes
+    name: "{{ dpkg_result.stderr_lines | select('search', 'dependency') | map('regex_replace', '.*dependency ([^ ]+).*', '\\1') | list }}"
+    state: present
+  when: dpkg_result.rc != 0
