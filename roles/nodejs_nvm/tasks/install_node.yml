@@ -1,0 +1,19 @@
+---
+- name: Install Node.js version using nvm
+  shell: |
+    . {{ ansible_env.HOME }}/.bashrc
+    nvm install {{ node_version }}
+  environment:
+    NVM_DIR: "{{ ansible_env.HOME }}/.nvm"
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.nvm/versions/node/v{{ node_version }}"
+
+- name: Set default Node.js version using nvm
+  shell: |
+    . {{ ansible_env.HOME }}/.bashrc
+    nvm alias default {{ node_version }}
+  environment:
+    NVM_DIR: "{{ ansible_env.HOME }}/.nvm"
+  args:
+    executable: /bin/bash

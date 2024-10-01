@@ -1,0 +1,4 @@
+---
+- import_tasks: install_nvm.yml
+- import_tasks: install_node.yml
+- import_tasks: install_vscode_extensions.yml

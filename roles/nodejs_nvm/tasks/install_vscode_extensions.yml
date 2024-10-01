@@ -1,0 +1,12 @@
+---
+- name: Install VS Code extensions
+  become: no
+  shell: code --install-extension {{ item }}
+  loop:
+    - dbaeumer.vscode-eslint
+    - esbenp.prettier-vscode
+    - ms-vscode.vscode-typescript-tslint-plugin
+    - msjsdiag.debugger-for-chrome
+    - eg2.vscode-npm-script
+  args:
+    creates: "{{ ansible_env.HOME }}/.vscode/extensions/{{ item }}"

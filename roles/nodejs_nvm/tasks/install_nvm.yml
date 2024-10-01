@@ -1,0 +1,30 @@
+---
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - curl
+      - build-essential
+      - libssl-dev
+    state: present
+    update_cache: yes
+
+- name: Download and install nvm
+  shell: |
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.nvm"
+
+- name: Set up nvm environment variables in .bashrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: |
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+      [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+    create: yes
+
+- name: Source .bashrc to apply nvm to current session
+  shell: source {{ ansible_env.HOME }}/.bashrc
+  args:
+    executable: /bin/bash
