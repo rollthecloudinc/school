@@ -1,0 +1,8 @@
+---
+- name: Install VS Code extensions
+  become: no
+  shell: code --install-extension {{ item }}
+  loop:
+    - golang.go
+  args:
+    creates: "{{ ansible_env.HOME }}/.vscode/extensions/{{ item }}"

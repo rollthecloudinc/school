@@ -1,0 +1,33 @@
+---
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - curl
+      - git
+      - make
+      - binutils
+      - bison
+      - gcc
+      - build-essential
+    state: present
+    update_cache: yes
+
+- name: Download and install GVM
+  shell: |
+    bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.gvm"
+
+- name: Set up GVM environment variables in .bashrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: |
+      export GVM_ROOT="$HOME/.gvm"
+      [[ -s "$GVM_ROOT/scripts/gvm" ]] && source "$GVM_ROOT/scripts/gvm"
+    create: yes
+
+- name: Source .bashrc to apply GVM to current session
+  shell: source {{ ansible_env.HOME }}/.bashrc
+  args:
+    executable: /bin/bash

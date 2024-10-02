@@ -1,0 +1,19 @@
+---
+- name: Install Go version using GVM
+  shell: |
+    . {{ ansible_env.HOME }}/.bashrc
+    gvm install go{{ go_version }} -B
+  environment:
+    GVM_ROOT: "{{ ansible_env.HOME }}/.gvm"
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.gvm/gos/go{{ go_version }}"
+
+- name: Set default Go version using GVM
+  shell: |
+    . {{ ansible_env.HOME }}/.bashrc
+    gvm use go{{ go_version }} --default
+  environment:
+    GVM_ROOT: "{{ ansible_env.HOME }}/.gvm"
+  args:
+    executable: /bin/bash
