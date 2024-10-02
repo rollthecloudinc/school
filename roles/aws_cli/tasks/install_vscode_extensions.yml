@@ -1,0 +1,9 @@
+---
+- name: Install VS Code extensions
+  become: false
+  shell: code --install-extension {{ item }}
+  loop:
+    - aws-scripting-guy.cform
+    - amazonwebservices.aws-toolkit-vscode
+  args:
+    creates: "{{ ansible_env.HOME }}/.vscode/extensions/{{ item }}"
