@@ -1,0 +1,19 @@
+---
+- name: Install Java version using SDKMAN
+  shell: |
+    . {{ ansible_env.HOME }}/.bashrc
+    sdk install java {{ java_version }}
+  environment:
+    SDKMAN_DIR: "{{ ansible_env.HOME }}/.sdkman"
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.sdkman/candidates/java/{{ java_version }}"
+
+- name: Set default Java version using SDKMAN
+  shell: |
+    . {{ ansible_env.HOME }}/.bashrc
+    sdk default java {{ java_version }}
+  environment:
+    SDKMAN_DIR: "{{ ansible_env.HOME }}/.sdkman"
+  args:
+    executable: /bin/bash

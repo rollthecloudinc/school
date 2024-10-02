@@ -1,0 +1,30 @@
+---
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - zip
+      - unzip
+      - curl
+      - wget
+    state: present
+    update_cache: yes
+
+- name: Download and install SDKMAN
+  shell: |
+    curl -s "https://get.sdkman.io" | bash
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.sdkman"
+
+- name: Set up SDKMAN environment variables in .bashrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: |
+      export SDKMAN_DIR="$HOME/.sdkman"
+      [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+    create: yes
+
+- name: Source .bashrc to apply SDKMAN to current session
+  shell: source {{ ansible_env.HOME }}/.bashrc
+  args:
+    executable: /bin/bash
