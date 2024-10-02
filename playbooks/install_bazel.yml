@@ -1,0 +1,6 @@
+---
+- name: Install Bazel, Gazelle, and set up development environment
+  hosts: localhost
+  become: yes
+  roles:
+    - bazel

@@ -1,0 +1,13 @@
+---
+- name: Ensure Go is installed
+  apt:
+    name: golang
+    state: present
+    update_cache: yes
+
+- name: Install Gazelle (compatible with Go 1.17)
+  shell: |
+    . {{ ansible_env.HOME }}/.bashrc
+    go install github.com/bazelbuild/bazel-gazelle/cmd/gazelle@v0.23.0
+  args:
+    executable: /bin/bash
