@@ -1,0 +1,9 @@
+---
+- name: Ensure C development tools are installed
+  apt:
+    name:
+      - gcc
+      - make
+      - gdb
+    state: present
+    update_cache: yes

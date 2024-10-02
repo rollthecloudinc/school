@@ -1,0 +1,6 @@
+---
+- name: Install C development tools and set up development environment
+  hosts: localhost
+  become: true
+  roles:
+    - c_dev
