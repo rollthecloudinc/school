@@ -1,0 +1,8 @@
+---
+- name: Install VS Code extensions
+  become: false
+  shell: code --install-extension {{ item }}
+  loop:
+    - hashicorp.terraform
+  args:
+    creates: "{{ ansible_env.HOME }}/.vscode/extensions/{{ item }}"

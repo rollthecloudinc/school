@@ -1,0 +1,6 @@
+---
+- name: Install Terraform and set up development environment
+  hosts: all
+  become: true
+  roles:
+    - terraform
