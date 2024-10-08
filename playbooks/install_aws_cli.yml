@@ -1,6 +1,6 @@
 ---
 - name: Install AWS CLI and set up development environment
-  hosts: localhost
+  hosts: all
   become: yes
   roles:
     - aws_cli

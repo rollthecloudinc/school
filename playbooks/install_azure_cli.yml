@@ -1,6 +1,6 @@
 ---
 - name: Install Azure CLI
   hosts: localhost
-  become: yes
+  become: all
   roles:
     - azure_cli

@@ -1,6 +1,6 @@
 ---
 - name: Install Go using GVM and set up development environment
-  hosts: localhost
+  hosts: all
   become: yes
   roles:
     - go_gvm

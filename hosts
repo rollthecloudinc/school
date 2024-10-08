@@ -1,0 +1,5 @@
+[local]
+localhost ansible_connection=local
+
+[edufleet]
+lenovo_ideapad_3_blue_core_i3_8g ansible_host=192.168.1.102 ansible_user=tzmijewski ansible_ssh_private_key_file=~/.ssh/id_rsa

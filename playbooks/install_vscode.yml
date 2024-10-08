@@ -1,6 +1,6 @@
 ---
 - name: Install VS Code
-  hosts: localhost
+  hosts: all
   become: yes
 
   tasks:

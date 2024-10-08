@@ -1,6 +1,6 @@
 ---
 - name: Install Java using SDKMAN and set up development environment
-  hosts: localhost
+  hosts: all
   become: yes
   roles:
     - java_dev

@@ -1,6 +1,6 @@
 ---
 - name: Install Google Chrome
-  hosts: localhost
+  hosts: all
   become: yes
 
   tasks:

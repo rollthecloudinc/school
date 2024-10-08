@@ -1,6 +1,6 @@
 ---
 - name: Install Node.js using nvm and set up development environment
-  hosts: localhost
+  hosts: all
   become: yes
   roles:
     - nodejs_nvm
