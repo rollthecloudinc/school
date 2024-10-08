@@ -1,0 +1,55 @@
+---
+- name: Ensure .bashrc exists for student user
+  file:
+    path: /home/student/.bashrc
+    state: touch
+    owner: student
+    group: student
+    mode: '0644'
+
+- name: Add pyenv initialization to .bashrc for student user
+  lineinfile:
+    path: /home/student/.bashrc
+    create: yes
+    state: present
+    line: |
+      export PATH="$HOME/.pyenv/bin:$PATH"
+      eval "$(pyenv init --path)"
+      eval "$(pyenv init -)"
+      eval "$(pyenv virtualenv-init -)"
+
+- name: Add nvm initialization to .bashrc for student user
+  lineinfile:
+    path: /home/student/.bashrc
+    create: yes
+    state: present
+    line: |
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+      [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+- name: Add SDKMAN initialization to .bashrc for student user
+  lineinfile:
+    path: /home/student/.bashrc
+    create: yes
+    state: present
+    line: |
+      export SDKMAN_DIR="$HOME/.sdkman"
+      [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+
+- name: Add GVM initialization to .bashrc for student user
+  lineinfile:
+    path: /home/student/.bashrc
+    create: yes
+    state: present
+    line: |
+      export GVM_ROOT="$HOME/.gvm"
+      [[ -s "$GVM_ROOT/scripts/gvm" ]] && source "$GVM_ROOT/scripts/gvm"
+      [[ -s "$GVM_ROOT/scripts/gvm" ]] && source "$GVM_ROOT/scripts/gvm"
+
+- name: Ensure correct ownership and permissions for .bashrc
+  file:
+    path: /home/student/.bashrc
+    owner: student
+    group: student
+    mode: '0644'

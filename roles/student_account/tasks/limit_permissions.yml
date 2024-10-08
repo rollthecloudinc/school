@@ -1,0 +1,10 @@
+---
+- name: Ensure student user is not in sudo group
+  user:
+    name: student
+    groups: ""
+    append: no
+
+- name: Ensure student user is not in any privileged groups
+  command: gpasswd -d student adm,sudo,docker,lpadmin
+  ignore_errors: true

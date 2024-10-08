@@ -1,0 +1,34 @@
+---
+- name: Install iptables-persistent package
+  apt:
+    name: iptables-persistent
+    state: present
+    update_cache: yes
+
+- name: Get GID of the student group
+  shell: "getent group student | cut -d: -f3"
+  register: student_gid
+
+- name: Allow traffic to specific sites for student group
+  iptables:
+    chain: OUTPUT
+    protocol: all
+    gid_owner: "{{ student_gid.stdout }}"
+    destination: "{{ item }}"
+    jump: ACCEPT
+  loop:
+    - "8.8.8.8"  # Example IP address (Google DNS)
+    - "8.8.4.4"  # Example IP address (Google DNS)
+    - "93.184.216.34"  # Example IP address (example.com)
+    - "172.217.0.0/16"  # Example IP range (Google)
+
+- name: Block all outgoing internet access for student group
+  iptables:
+    chain: OUTPUT
+    protocol: all
+    gid_owner: "{{ student_gid.stdout }}"
+    jump: REJECT
+    state: present
+
+- name: Save iptables rules
+  shell: iptables-save > /etc/iptables/rules.v4

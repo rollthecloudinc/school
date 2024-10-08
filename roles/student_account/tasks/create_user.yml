@@ -1,0 +1,20 @@
+---
+- name: Ensure openssl is installed
+  apt:
+    name: openssl
+    state: present
+    update_cache: yes
+
+- name: Generate hashed password for student user
+  command: openssl passwd -6 "Coding4Good!"
+  register: hashed_password
+
+- name: Create student user
+  user:
+    name: student
+    comment: "Student User"
+    shell: /bin/bash
+    state: present
+    createhome: yes
+    groups: student
+    password: "{{ hashed_password.stdout }}"

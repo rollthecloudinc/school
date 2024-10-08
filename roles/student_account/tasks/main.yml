@@ -1,0 +1,4 @@
+---
+- import_tasks: create_user.yml
+- import_tasks: limit_permissions.yml
+# - import_tasks: update_bashrc.yml

@@ -1,0 +1,3 @@
+---
+- import_tasks: create_group.yml
+- import_tasks: restrict_internet.yml

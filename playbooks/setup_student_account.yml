@@ -1,0 +1,6 @@
+---
+- name: Set up student group and user, and restrict permissions
+  hosts: all
+  become: true
+  roles:
+    - student_account
