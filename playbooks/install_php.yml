@@ -1,0 +1,8 @@
+---
+- name: Install PHP and set up development environment
+  hosts: all
+  become: yes
+  vars:
+    php_version: "7.4.23"  # Specify the default PHP version you want to set
+  roles:
+    - phpenv

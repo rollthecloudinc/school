@@ -1,0 +1,44 @@
+---
+- name: Ensure dependencies are installed
+  apt:
+    name:
+      - make
+      - build-essential
+      - autoconf
+      - libssl-dev
+      - zlib1g-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - wget
+      - curl
+      - llvm
+      - libncurses5-dev
+      - libncursesw5-dev
+      - xz-utils
+      - tk-dev
+      - libffi-dev
+      - liblzma-dev
+      - python3-openssl
+      - git
+      - libcurl4-openssl-dev
+      - libjpeg-dev
+      - libonig-dev
+      - libtidy-dev
+      - libxslt1-dev
+      - libzip-dev
+      - libicu-dev
+    state: present
+    update_cache: yes
+
+- name: Install phpenv
+  git:
+    repo: "https://github.com/phpenv/phpenv.git"
+    dest: "/usr/local/phpenv"
+    update: yes
+
+- name: Install php-build plugin for phpenv
+  git:
+    repo: "https://github.com/php-build/php-build.git"
+    dest: "/usr/local/phpenv/plugins/php-build"
+    update: yes

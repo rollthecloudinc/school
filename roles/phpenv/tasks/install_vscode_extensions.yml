@@ -1,0 +1,8 @@
+---
+- name: Install VS Code extensions
+  become: no
+  shell: code --install-extension {{ item }}
+  loop:
+    - bmewburn.vscode-intelephense-client
+  args:
+    creates: "{{ ansible_env.HOME }}/.vscode/extensions/{{ item }}"

@@ -1,0 +1,30 @@
+---
+- name: Ensure /etc/profile.d directory exists
+  file:
+    path: /etc/profile.d
+    state: directory
+
+- name: Add phpenv initialization to system-wide profile
+  copy:
+    dest: /etc/profile.d/phpenv.sh
+    content: |
+      export PHPENV_ROOT="/usr/local/phpenv"
+      export PATH="$PHPENV_ROOT/bin:$PATH"
+      if command -v phpenv >/dev/null 2>&1; then
+        eval "$(phpenv init --path)"
+        eval "$(phpenv init -)"
+      fi
+    mode: '0755'
+
+- name: Ensure correct ownership and permissions for /etc/profile.d/phpenv.sh
+  file:
+    path: /etc/profile.d/phpenv.sh
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Source /etc/profile.d/phpenv.sh to apply changes
+  shell: |
+    source /etc/profile.d/phpenv.sh
+  args:
+    executable: /bin/bash

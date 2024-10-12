@@ -1,0 +1,5 @@
+---
+- import_tasks: install_phpenv.yml
+- import_tasks: configure_env.yml
+- import_tasks: install_php.yml
+- import_tasks: install_vscode_extensions.yml

@@ -1,0 +1,66 @@
+---
+#- name: Install PHP 5.4 version using phpenv
+#  shell: |
+#    . /etc/profile
+#    phpenv install 5.4.45
+#  environment:
+#    PHPENV_ROOT: "/usr/local/phpenv"
+#  args:
+#    executable: /bin/bash
+#creates: "/usr/local/phpenv/versions/5.4.45"
+
+- name: Copy ICU compatibility patch to target
+  copy:
+    src: patches/icu70-php74.patch
+    dest: /tmp/icu70-php74.patch
+
+- name: Download PHP source code
+  shell: |
+    source /etc/profile.d/phpenv.sh
+    mkdir -p /tmp/php-src && cd /tmp/php-src
+    wget https://secure.php.net/distributions/php-7.4.23.tar.bz2
+    tar -xjf php-7.4.23.tar.bz2
+  args:
+    executable: /bin/bash
+
+- name: Apply ICU compatibility patch
+  shell: |
+    cd /tmp/php-src/php-7.4.23
+    patch -p1 < /tmp/icu70-php74.patch
+  args:
+    executable: /bin/bash
+
+- name: Install PHP 7.4 version using phpenv
+  shell: |
+    source /etc/profile.d/phpenv.sh
+    cd /tmp/php-src/php-7.4.23
+    ./configure --prefix=/usr/local/phpenv/versions/7.4.23
+    make
+    make install
+  environment:
+    PHPENV_ROOT: "/usr/local/phpenv"
+  args:
+    executable: /bin/bash
+  environment:
+    PATH: "/usr/local/phpenv/bin:{{ ansible_env.PATH }}"
+
+- name: Set default PHP version to 7.4 using phpenv
+  shell: |
+    . /etc/profile
+    phpenv global 7.4.23
+  environment:
+    PHPENV_ROOT: "/usr/local/phpenv"
+  args:
+    executable: /bin/bash
+
+- name: Verify PHP version
+  shell: |
+    source /etc/profile.d/phpenv.sh
+    php -v
+  args:
+    executable: /bin/bash
+  register: php_version_output
+
+- name: Print PHP version
+  debug:
+    msg: "{{ php_version_output.stdout }}"
