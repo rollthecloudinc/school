@@ -1,0 +1,6 @@
+---
+- name: Install GIMP
+  hosts: all
+  become: yes
+  roles:
+    - gimp
