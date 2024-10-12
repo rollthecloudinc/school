@@ -1,0 +1,6 @@
+---
+- name: Install Inkscape
+  hosts: all
+  become: yes
+  roles:
+    - inkscape
