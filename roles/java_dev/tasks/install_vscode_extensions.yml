@@ -1,7 +1,9 @@
----
 - name: Install VS Code extensions
   become: no
-  shell: code --install-extension {{ item }}
+  shell: |
+    if ! code --list-extensions | grep -q {{ item }}; then
+      code --install-extension {{ item }}
+    fi
   loop:
     - vscjava.vscode-java-pack
     - vscjava.vscode-java-debug
@@ -9,4 +11,8 @@
     - vscjava.vscode-maven
     - redhat.java
   args:
-    creates: "{{ ansible_env.HOME }}/.vscode/extensions/{{ item }}"
+    executable: /bin/bash
+  retries: 3
+  delay: 5
+  register: vscode_install_result
+  until: vscode_install_result.rc == 0
