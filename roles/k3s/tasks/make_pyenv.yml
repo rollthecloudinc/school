@@ -1,0 +1,87 @@
+---
+# Preconfigure Pyenv and Python Version
+
+# Create global Pyenv directory
+- name: Ensure Pyenv directory exists
+  file:
+    path: /opt/pyenv
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+# Check if Pyenv is already installed
+- name: Check if Pyenv is already installed
+  stat:
+    path: /opt/pyenv/bin/pyenv
+  register: pyenv_exists
+
+# Download and install Pyenv if not installed
+- name: Install Pyenv globally
+  shell: |
+    curl https://pyenv.run | bash
+    mv /root/.pyenv/* /opt/pyenv/ || true
+    rmdir /root/.pyenv || true
+  args:
+    executable: /bin/bash
+  when: not pyenv_exists.stat.exists
+
+# Configure Pyenv environment variables globally
+- name: Add Pyenv environment variables
+  copy:
+    dest: /etc/profile.d/pyenv.sh
+    content: |
+      export PYENV_ROOT="/opt/pyenv"
+      export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+      eval "$(pyenv init --path)"
+      eval "$(pyenv init -)"
+    owner: root
+    group: root
+    mode: '0755'
+
+# Reload Pyenv environment variables
+- name: Reload Pyenv environment variables
+  shell: source /etc/profile.d/pyenv.sh
+  args:
+    executable: /bin/bash
+
+# Install the desired Python version using Pyenv
+- name: Install Python version using Pyenv
+  shell: |
+    export PYENV_ROOT="/opt/pyenv"
+    export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+    pyenv install -s {{ python_version }}
+  args:
+    executable: /bin/bash
+  register: python_install_result
+  failed_when: "'already exists' not in python_install_result.stderr and python_install_result.rc != 0"
+  changed_when: "'already exists' not in python_install_result.stderr"
+
+# Set the installed Python version as the global default
+- name: Set global Python version
+  shell: |
+    export PYENV_ROOT="/opt/pyenv"
+    export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+    pyenv global {{ python_version }}
+  args:
+    executable: /bin/bash
+  register: python_global_result
+  failed_when: python_global_result.rc != 0
+  changed_when: python_global_result.rc == 0
+
+# Verify Python installation
+- name: Verify Python version
+  shell: |
+    export PYENV_ROOT="/opt/pyenv"
+    export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+    python --version
+  args:
+    executable: /bin/bash
+  register: python_version_check
+  failed_when: python_version_check.rc != 0
+
+- name: Debug Python version output
+  debug:
+    var: python_version_check.stdout

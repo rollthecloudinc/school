@@ -1,0 +1,80 @@
+---
+# Install and Configure Pyenv
+
+# Ensure required build dependencies are installed
+- name: Ensure required build dependencies are installed
+  apt:
+    name:
+      - make
+      - build-essential
+      - libssl-dev
+      - zlib1g-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - wget
+      - curl
+      - llvm
+      - libncurses5-dev
+      - libncursesw5-dev
+      - xz-utils
+      - tk-dev
+      - libffi-dev
+      - liblzma-dev
+      - python3-openssl
+      - git
+    state: present
+    update_cache: yes
+
+# Create a global pyenv directory
+- name: Create a global pyenv directory
+  file:
+    path: /opt/pyenv
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+# Check if pyenv is already installed
+- name: Check if pyenv is already installed
+  stat:
+    path: /opt/pyenv/bin/pyenv
+  register: pyenv_exists
+
+# Download and install pyenv globally
+- name: Download and install pyenv globally
+  shell: |
+    curl https://pyenv.run | bash
+    mv /root/.pyenv/* /opt/pyenv/ || true
+    rmdir /root/.pyenv || true
+  args:
+    executable: /bin/bash
+  when: not pyenv_exists.stat.exists
+
+# Set up pyenv environment variables globally in /etc/profile.d
+- name: Configure pyenv environment variables globally
+  copy:
+    dest: /etc/profile.d/pyenv.sh
+    content: |
+      export PYENV_ROOT="/opt/pyenv"
+      export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+      eval "$(pyenv init --path)"
+      eval "$(pyenv init -)"
+    owner: root
+    group: root
+    mode: '0755'
+
+# Add pyenv environment variables to /etc/environment
+- name: Add pyenv environment variables to /etc/environment
+  lineinfile:
+    path: /etc/environment
+    state: present
+    line: |
+      PYENV_ROOT="/opt/pyenv"
+      PATH="/opt/pyenv/bin:/opt/pyenv/shims:$PATH"
+
+# Reload /etc/environment
+- name: Reload environment variables
+  shell: source /etc/environment
+  args:
+    executable: /bin/bash

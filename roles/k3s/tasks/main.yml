@@ -1,0 +1,7 @@
+# Main task file includes other task files
+- import_tasks: make_pyenv.yml
+- import_tasks: install_dependencies.yml
+- import_tasks: install_k3s.yml
+- import_tasks: configure_users.yml
+- import_tasks: verify_k3s.yml
+- import_tasks: make_pod.yml

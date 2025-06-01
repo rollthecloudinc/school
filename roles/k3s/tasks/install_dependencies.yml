@@ -1,0 +1,12 @@
+---
+# This task ensures python dependencies are installed
+
+- name: Install Python Kubernetes and OpenShift libraries
+  pip:
+    name:
+      - kubernetes
+      - openshift
+    state: present
+    executable: "/opt/pyenv/versions/{{ python_version }}/bin/pip3"
+  delegate_to: localhost
+  run_once: true

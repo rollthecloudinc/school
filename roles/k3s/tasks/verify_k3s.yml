@@ -1,0 +1,9 @@
+---
+# Task to verify the K3s installation
+
+- name: Verify K3s installation
+  command: k3s --version
+  register: k3s_version
+
+- debug:
+    msg: "Installed K3s version: {{ k3s_version.stdout }}"
