@@ -1,0 +1,8 @@
+---
+# Task to install Cassandra
+
+- name: Install Cassandra
+  apt:
+    name: cassandra
+    state: present
+    update_cache: yes

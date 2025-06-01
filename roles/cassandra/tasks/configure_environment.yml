@@ -1,0 +1,15 @@
+---
+- name: Create a global environment file for Cassandra
+  copy:
+    content: |
+      export CASSANDRA_HOME=/opt/cassandra
+      export PATH=$PATH:$CASSANDRA_HOME/bin
+    dest: /etc/profile.d/cassandra.sh
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Source Cassandra environment file
+  shell: source /etc/profile.d/cassandra.sh
+  args:
+    executable: /bin/bash

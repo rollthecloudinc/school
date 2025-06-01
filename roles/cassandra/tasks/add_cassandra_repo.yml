@@ -1,0 +1,12 @@
+---
+# Task to add the Cassandra repository
+
+- name: Add Cassandra repository key
+  apt_key:
+    url: "https://www.apache.org/dist/cassandra/KEYS"
+    state: present
+
+- name: Add Cassandra repository
+  apt_repository:
+    repo: "deb [arch=amd64] http://www.apache.org/dist/cassandra/debian {{ cassandra_version }} main"
+    state: present

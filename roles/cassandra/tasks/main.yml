@@ -1,2 +1,8 @@
 ---
-# tasks file for roles/cassandra
+# Main task file for the Cassandra role
+# Includes all the tasks in the correct order for installation and configuration
+
+- include_tasks: download_cassandra.yml
+- include_tasks: configure_environment.yml
+- include_tasks: setup_service.yml
+- include_tasks: start_cassandra.yml

@@ -1,2 +1,4 @@
 ---
-# vars file for roles/cassandra
+# Static variables for the Cassandra role
+cassandra_repo_url: "http://www.apache.org/dist/cassandra/debian"
+cassandra_repo_key_url: "https://www.apache.org/dist/cassandra/KEYS"

@@ -1,0 +1,17 @@
+[Unit]
+Description=Apache Cassandra
+After=network.target
+
+[Service]
+Type=forking
+Environment="JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64"
+Environment="CASSANDRA_HOME=/opt/cassandra"
+Environment="CASSANDRA_CONF=/opt/cassandra/conf"
+ExecStart=/opt/cassandra/bin/cassandra -R
+User=root
+LimitNOFILE=100000
+LimitMEMLOCK=infinity
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,2 +1,12 @@
 ---
-# handlers file for roles/cassandra
+# Handlers for the Cassandra role
+
+- name: restart cassandra
+  service:
+    name: cassandra
+    state: restarted
+
+- name: reload cassandra
+  service:
+    name: cassandra
+    state: reloaded

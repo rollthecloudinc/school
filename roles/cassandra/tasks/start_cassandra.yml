@@ -1,0 +1,6 @@
+---
+- name: Start Cassandra service
+  systemd:
+    name: cassandra
+    state: started
+    enabled: true
