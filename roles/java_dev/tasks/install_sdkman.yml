@@ -1,4 +1,5 @@
 ---
+# Ensure required dependencies are installed
 - name: Ensure dependencies are installed
   apt:
     name:
@@ -9,35 +10,43 @@
     state: present
     update_cache: yes
 
-- name: Download and install SDKMAN
+# Create a global SDKMAN directory
+- name: Create a global SDKMAN directory
+  file:
+    path: /opt/sdkman
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+# Check if SDKMAN is already installed
+- name: Check if SDKMAN is already installed
+  stat:
+    path: /opt/sdkman/bin/sdkman-init.sh
+  register: sdkman_exists
+
+# Download and install SDKMAN into /opt/sdkman
+- name: Download and install SDKMAN into /opt/sdkman
   shell: |
     curl -s "https://get.sdkman.io" | bash
+    [ -d /root/.sdkman ] && mv /root/.sdkman/* /opt/sdkman/ || true
+    rmdir /root/.sdkman || true
   args:
     executable: /bin/bash
-    creates: "{{ ansible_env.HOME }}/.sdkman"
+  when: not sdkman_exists.stat.exists
 
-- name: Set up SDKMAN environment variables in .bashrc
-  lineinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc"
-    line: |
-      export SDKMAN_DIR="$HOME/.sdkman"
+# Set up SDKMAN environment variables globally
+- name: Set up SDKMAN environment variables globally
+  copy:
+    dest: /etc/profile.d/sdkman.sh
+    content: |
+      export SDKMAN_DIR="/opt/sdkman"
       [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
-    create: yes
+    owner: root
+    group: root
+    mode: '0755'
 
-- name: Source .bashrc to apply SDKMAN to current session
-  shell: source {{ ansible_env.HOME }}/.bashrc
-  args:
-    executable: /bin/bash
-
-- name: Add Java to PATH in .bashrc
-  lineinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc"
-    line: |
-      export JAVA_HOME="{{ ansible_env.HOME }}/.sdkman/candidates/java/current"
-      export PATH="$JAVA_HOME/bin:$PATH"
-    create: yes
-
-- name: Source .bashrc to apply JAVA to current session
-  shell: source {{ ansible_env.HOME }}/.bashrc
+- name: Reload global environment variables for current session
+  shell: . /etc/profile.d/sdkman.sh  # Use dot command for compatibility
   args:
     executable: /bin/bash
