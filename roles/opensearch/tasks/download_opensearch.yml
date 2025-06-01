@@ -1,0 +1,18 @@
+- name: Download OpenSearch 2.19
+  get_url:
+    url: https://artifacts.opensearch.org/releases/bundle/opensearch/2.19.0/opensearch-2.19.0-linux-x64.tar.gz
+    dest: /tmp/opensearch-2.19.0-linux-x64.tar.gz
+
+- name: Extract OpenSearch
+  unarchive:
+    src: /tmp/opensearch-2.19.0-linux-x64.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: Ensure OpenSearch directory has correct permissions
+  file:
+    path: /opt/opensearch-2.19.0
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory

@@ -1,0 +1,9 @@
+---
+# handlers file for roles/opensearch
+- name: Restart OpenSearch
+  command: /opt/opensearch-2.19.0/bin/opensearch-stop && /opt/opensearch-2.19.0/bin/opensearch-start
+  notify:
+    - Start OpenSearch Service
+
+- name: Start OpenSearch Service
+  command: /opt/opensearch-2.19.0/bin/opensearch-start

@@ -1,0 +1,6 @@
+---
+# tasks file for roles/opensearch
+- include_tasks: install_dependencies.yml
+- include_tasks: download_opensearch.yml
+- include_tasks: configure_opensearch.yml
+- include_tasks: start_opensearch.yml

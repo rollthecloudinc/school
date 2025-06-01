@@ -1,71 +1,5 @@
 ---
-- name: Ensure dependencies are installed
-  apt:
-    name:
-      - zip
-      - unzip
-      - curl
-      - wget
-    state: present
-    update_cache: yes
-
-# Create a global SDKMAN directory
-- name: Create a global SDKMAN directory
-  file:
-    path: /opt/sdkman
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-
-# Check if SDKMAN is already installed
-- name: Check if SDKMAN is already installed
-  stat:
-    path: /opt/sdkman/bin/sdkman-init.sh
-  register: sdkman_exists
-
-# Download and install SDKMAN into /opt/sdkman
-- name: Download and install SDKMAN into /opt/sdkman
-  shell: |
-    curl -s "https://get.sdkman.io" | bash
-    [ -d /root/.sdkman ] && mv /root/.sdkman/* /opt/sdkman/ || true
-    rmdir /root/.sdkman || true
-  args:
-    executable: /bin/bash
-  when: not sdkman_exists.stat.exists
-
-# Set up SDKMAN environment variables globally
-- name: Set up SDKMAN environment variables globally
-  copy:
-    dest: /etc/profile.d/sdkman.sh
-    content: |
-      export SDKMAN_DIR="/opt/sdkman"
-      [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
-    owner: root
-    group: root
-    mode: '0755'
-
-- name: Reload global environment variables for current session
-  shell: . /etc/profile.d/sdkman.sh  # Use dot command for compatibility
-  args:
-    executable: /bin/bash
-
-# Verify SDKMAN command is available
-- name: Verify SDKMAN command is available
-  shell: |
-    export SDKMAN_DIR="/opt/sdkman"
-    source /etc/profile.d/sdkman.sh
-    sdk version
-  args:
-    executable: /bin/bash
-  register: sdk_version_result
-  failed_when: sdk_version_result.rc != 0
-  changed_when: false
-
-- name: Debug SDKMAN version
-  debug:
-    var: sdk_version_result.stdout
-
+# Install Java version using SDKMAN
 - name: Install Java version using SDKMAN
   shell: |
     export SDKMAN_DIR="/opt/sdkman"
@@ -81,21 +15,60 @@
   debug:
     var: java_install_result.stdout
 
-- name: Debug Java installation output
-  debug:
-    var: java_install_result.stdout
+# Verify SDKMAN Java directory exists
+- name: Verify SDKMAN Java directory exists
+  stat:
+    path: "/opt/sdkman/candidates/java/{{ java_version }}"
+  register: java_sdkman_directory
 
-# Set default Java version using SDKMAN
-- name: Set default Java version using SDKMAN
+# Create or update the 'current' symlink for SDKMAN Java
+- name: Ensure 'current' symlink for SDKMAN Java points to installed version
+  file:
+    src: "/opt/sdkman/candidates/java/{{ java_version }}"
+    dest: "/opt/sdkman/candidates/java/current"
+    state: link
+  when: java_sdkman_directory.stat.exists
+
+# Add JAVA_HOME to global profile
+- name: Add JAVA_HOME to global profile
+  copy:
+    dest: /etc/profile.d/sdkman.sh
+    content: |
+      export SDKMAN_DIR="/opt/sdkman"
+      [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+      export JAVA_HOME="$SDKMAN_DIR/candidates/java/current"
+      export PATH="$JAVA_HOME/bin:$PATH"
+    owner: root
+    group: root
+    mode: '0755'
+
+# Reload global profile for current session
+- name: Reload global profile for current session
+  shell: source /etc/profile.d/sdkman.sh
+  args:
+    executable: /bin/bash
+
+# Verify JAVA_HOME is set
+- name: Verify JAVA_HOME is set
+  shell: echo $JAVA_HOME
+  register: java_home_output
+  args:
+    executable: /bin/bash
+
+- name: Debug JAVA_HOME
+  debug:
+    var: java_home_output.stdout
+
+# Verify Java installation
+- name: Verify Java installation
   shell: |
     export SDKMAN_DIR="/opt/sdkman"
     source $SDKMAN_DIR/bin/sdkman-init.sh
-    sdk default java {{ java_version }}
+    java -version
+  register: java_version_output
   args:
     executable: /bin/bash
-  register: java_default_result
-  failed_when: java_default_result.rc != 0
 
-
-
-
+- name: Debug Java version output
+  debug:
+    var: java_version_output.stdout
