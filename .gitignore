@@ -1,2 +1,3 @@
 ansible.log
 playbooks/kubeconfig.yaml
+playbooks/xkubeconfig.yaml
