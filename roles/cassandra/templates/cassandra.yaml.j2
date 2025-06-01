@@ -1,0 +1,27 @@
+# Cassandra Configuration File
+
+cluster_name: "{{ cassandra_cluster_name }}"
+
+# Network-related settings
+listen_address: "{{ cassandra_listen_address }}"
+rpc_address: "{{ cassandra_rpc_address }}"
+
+# Seed nodes (usually at least 2 nodes in a production cluster)
+seed_provider:
+  - class_name: org.apache.cassandra.locator.SimpleSeedProvider
+    parameters:
+      - seeds: "{{ cassandra_seed_nodes | join(',') }}"
+
+# Data directories
+data_file_directories:
+  - /var/lib/cassandra/data
+
+# Commit log
+commitlog_directory: /var/lib/cassandra/commitlog
+
+# Saved caches
+saved_caches_directory: /var/lib/cassandra/saved_caches
+
+# Other settings (you can add more as needed)
+num_tokens: 256
+endpoint_snitch: GossipingPropertyFileSnitch

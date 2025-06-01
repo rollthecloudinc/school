@@ -1,0 +1,22 @@
+---
+- name: Download Cassandra tarball
+  get_url:
+    url: "{{ cassandra_download_url }}"
+    dest: /tmp/apache-cassandra-{{ cassandra_version }}-bin.tar.gz
+    mode: '0644'
+
+- name: Extract Cassandra tarball
+  unarchive:
+    src: /tmp/apache-cassandra-{{ cassandra_version }}-bin.tar.gz
+    dest: /opt
+    remote_src: yes
+
+- name: Remove existing Cassandra directory if it exists
+  file:
+    path: /opt/cassandra
+    state: absent
+
+- name: Rename extracted directory to standard name
+  command: mv /opt/apache-cassandra-{{ cassandra_version }} /opt/cassandra
+  args:
+    creates: /opt/cassandra/bin/cassandra

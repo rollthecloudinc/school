@@ -1,0 +1,14 @@
+---
+# Task to install Cassandra dependencies
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install required dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    #- openjdk-11-jdk
+    - gnupg
