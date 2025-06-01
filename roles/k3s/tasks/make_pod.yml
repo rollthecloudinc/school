@@ -1,0 +1,74 @@
+---
+- name: Debug Deployment YAML
+  debug:
+    msg: "{{ lookup('template', 'hello-world-deployment.yaml.j2') }}"
+
+- name: Debug Service YAML
+  debug:
+    msg: "{{ lookup('template', 'hello-world-service.yaml.j2') }}"
+
+- name: Create "Hello World" Deployment
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'hello-world-deployment.yaml.j2') }}"
+    #kubeconfig: "{{playbook_dir}}/kubeconfig.yaml"
+    kubeconfig: "/etc/rancher/k3s/k3s.yaml"
+  register: deployment_result
+
+- name: Debug Deployment Creation Result
+  debug:
+    var: deployment_result
+
+- name: Create "Hello World" Service
+  k8s:
+    state: present
+    definition: "{{ lookup('template', 'hello-world-service.yaml.j2') }}"
+    # kubeconfig: "{{playbook_dir}}/kubeconfig.yaml"
+    kubeconfig: "/etc/rancher/k3s/k3s.yaml"
+  register: service_result
+
+- name: Debug Service Creation Result
+  debug:
+    var: service_result
+
+- name: Verify Deployment Status
+  shell: kubectl get deployments hello-world
+  args:
+    executable: /bin/bash
+  register: deployment_status
+
+- name: Debug Deployment Status
+  debug:
+    var: deployment_status.stdout_lines
+
+- name: Verify Service Status
+  shell: kubectl get services hello-world-service
+  args:
+    executable: /bin/bash
+  register: service_status
+
+- name: Debug Service Status
+  debug:
+    var: service_status.stdout_lines
+
+- name: Test Service Accessibility via Port-Forward
+  shell: kubectl port-forward service/hello-world-service 8080:80 &
+  args:
+    executable: /bin/bash
+  async: 300
+  poll: 0
+  register: port_forward_result
+
+- name: Debug Port-Forward Result
+  debug:
+    var: port_forward_result
+
+- name: Access Service Locally
+  shell: curl http://127.0.0.1:8080
+  args:
+    executable: /bin/bash
+  register: curl_result
+
+- name: Debug Curl Result
+  debug:
+    var: curl_result.stdout_lines

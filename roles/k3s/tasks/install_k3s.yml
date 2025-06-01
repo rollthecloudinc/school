@@ -1,0 +1,21 @@
+---
+# Task to download and install K3s
+- name: Add K3s installation script
+  shell: curl -sfL https://get.k3s.io -o /tmp/install_k3s.sh
+  args:
+    executable: /bin/bash
+
+- name: Make installation script executable
+  file:
+    path: /tmp/install_k3s.sh
+    mode: '0755'
+
+- name: Install K3s
+  shell: /tmp/install_k3s.sh {{ k3s_install_options }}
+  args:
+    executable: /bin/bash
+
+- name: Ensure K3s binary is executable
+  file:
+    path: /usr/local/bin/k3s
+    mode: '0755'

@@ -1,59 +1,89 @@
 ---
-- name: Update and install dependencies
-  apt:
-    update_cache: yes
-    name:
-      - make
-      - build-essential
-      - libssl-dev
-      - zlib1g-dev
-      - libbz2-dev
-      - libreadline-dev
-      - libsqlite3-dev
-      - wget
-      - curl
-      - llvm
-      - libncurses5-dev
-      - libncursesw5-dev
-      - xz-utils
-      - tk-dev
-      - libffi-dev
-      - liblzma-dev
-      - python3-openssl
-      - git
-    state: present
+# Install Python Version and Configure Defaults
 
-- name: Install pyenv
-  shell: curl https://pyenv.run | bash
-  args:
-    creates: "{{ ansible_env.HOME }}/.pyenv"
-
-- name: Set up pyenv environment variables in .bashrc
-  lineinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc"
-    line: |
-      export PATH="$HOME/.pyenv/bin:$PATH"
-      eval "$(pyenv init --path)"
-      eval "$(pyenv init -)"
-      eval "$(pyenv virtualenv-init -)"
-    create: yes
-
-- name: Reload .bashrc to apply pyenv to current session
-  shell: source {{ ansible_env.HOME }}/.bashrc
+# Install Python version using pyenv
+- name: Install Python version using pyenv
+  shell: |
+    export PYENV_ROOT="/opt/pyenv"
+    export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+    pyenv install -s {{ python_version }}
   args:
     executable: /bin/bash
+  register: python_install_result
+  failed_when: "'already exists' not in python_install_result.stderr and python_install_result.rc != 0"
+  changed_when: "'already exists' not in python_install_result.stderr"
 
-- name: Install Python version using pyenv
-  shell: "{{ ansible_env.HOME }}/.pyenv/bin/pyenv install {{ python_version }}"
-  environment:
-    PYENV_ROOT: "{{ ansible_env.HOME }}/.pyenv"
-    PATH: "{{ ansible_env.HOME }}/.pyenv/bin:{{ ansible_env.PATH }}"
+# Set default Python version globally
+- name: Set default Python version globally
+  shell: |
+    export PYENV_ROOT="/opt/pyenv"
+    export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+    pyenv global {{ python_version }}
   args:
-    creates: "{{ ansible_env.HOME }}/.pyenv/versions/{{ python_version }}"
+    executable: /bin/bash
+  register: python_global_result
+  failed_when: python_global_result.rc != 0
+  changed_when: python_global_result.rc == 0
 
-- name: Set global Python version using pyenv
-  shell: "{{ ansible_env.HOME }}/.pyenv/bin/pyenv global {{ python_version }}"
-  environment:
-    PYENV_ROOT: "{{ ansible_env.HOME }}/.pyenv"
-    PATH: "{{ ansible_env.HOME }}/.pyenv/bin:{{ ansible_env.PATH }}"
+# Create a python alias if missing
+- name: Ensure python points to python3
+  file:
+    src: "/opt/pyenv/shims/python3"
+    dest: "/opt/pyenv/shims/python"
+    state: link
+    force: yes
 
+# Verify Python and pip installation
+- name: Verify Python and pip installation
+  shell: |
+    export PYENV_ROOT="/opt/pyenv"
+    export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+    python --version && pip3 --version
+  args:
+    executable: /bin/bash
+  register: python_pip_check
+  failed_when: python_pip_check.rc != 0
+  changed_when: false
+
+# Debug Python and pip version output
+- name: Debug Python and pip version output
+  debug:
+    msg:
+      - "Python Version: {{ python_pip_check.stdout_lines[0] }}"
+      - "Pip Version: {{ python_pip_check.stdout_lines[1] }}"
+
+# Verify pyenv command accessibility
+- name: Verify pyenv command accessibility
+  shell: |
+    export PYENV_ROOT="/opt/pyenv"
+    export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+    pyenv --version
+  args:
+    executable: /bin/bash
+  register: pyenv_check
+  failed_when: pyenv_check.rc != 0
+  changed_when: false
+
+# Debug pyenv version output
+- name: Debug pyenv version output
+  debug:
+    var: pyenv_check.stdout
+
+# Ensure Python and pip are accessible by external programs
+- name: Test Python and pip accessibility by external programs
+  shell: |
+    export PYENV_ROOT="/opt/pyenv"
+    export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
+    python -c "import sys; print('Python is accessible')" && pip3 list
+  args:
+    executable: /bin/bash
+  register: external_program_check
+  failed_when: external_program_check.rc != 0
+  changed_when: false
+
+# Debug external program accessibility test result
+- name: Debug external program accessibility test result
+  debug:
+    var: external_program_check.stdout

@@ -1,6 +1,5 @@
 ---
-python_version: "3.9.5"
-pyenv_root: "{{ ansible_env.HOME }}/.pyenv"
+python_version: "3.9.9"
 vs_code_extensions:
   - ms-python.python
   - ms-toolsai.jupyter
