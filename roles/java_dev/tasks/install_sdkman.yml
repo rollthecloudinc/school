@@ -46,7 +46,18 @@
     group: root
     mode: '0755'
 
-- name: Reload global environment variables for current session
-  shell: . /etc/profile.d/sdkman.sh  # Use dot command for compatibility
+# Verify SDKMAN command is available
+- name: Verify SDKMAN command is available
+  shell: |
+    export SDKMAN_DIR="/opt/sdkman"
+    source /etc/profile.d/sdkman.sh
+    sdk version
   args:
     executable: /bin/bash
+  register: sdk_version_result
+  failed_when: sdk_version_result.rc != 0
+  changed_when: false
+
+- name: Debug SDKMAN version
+  debug:
+    var: sdk_version_result.stdout

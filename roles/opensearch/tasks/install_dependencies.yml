@@ -1,0 +1,10 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Java and other dependencies
+  apt:
+    name:
+      - wget
+      - unzip
+    state: present

@@ -1,0 +1,51 @@
+---
+- name: Copy OpenSearch configuration template
+  template:
+    src: opensearch-dev.yml.j2
+    dest: /opt/opensearch-2.19.0/config/opensearch.yml
+
+# Task to create the custom data path directory
+- name: Create OpenSearch data path directory
+  file:
+    path: /var/opensearch/data
+    state: directory
+    #owner: opensearch
+    #group: opensearch
+    mode: '0777'
+
+# Task to create the custom data path directory
+- name: Create OpenSearch logs directory
+  file:
+    path: /var/opensearch/logs
+    state: directory
+    #owner: opensearch
+    #group: opensearch
+    mode: '0777'
+
+# Task to update the OpenSearch configuration file to set the data path
+- name: Update OpenSearch configuration to use custom data path
+  lineinfile:
+    path: /opt/opensearch-2.19.0/config/opensearch.yml
+    regexp: '^path.data:'
+    line: 'path.data: /var/opensearch/data'
+    state: present
+
+# Task to update the OpenSearch configuration file to set the logs path
+- name: Update OpenSearch configuration to use custom logs path
+  lineinfile:
+    path: /opt/opensearch-2.19.0/config/opensearch.yml
+    regexp: '^path.logs:'
+    line: 'path.logs: /var/opensearch/logs'
+    state: present
+
+# Restart OpenSearch to apply configuration changes
+#- name: Restart OpenSearch service
+#  systemd:
+#    name: opensearch
+#    state: restarted
+
+#- name: Install AI RAG plugin
+#  command: >
+#    /opt/opensearch-2.19.0/bin/opensearch-plugin install file:///path/to/opensearch-ai-rag-plugin.zip
+#  args:
+#    creates: /opt/opensearch-2.19.0/plugins/opensearch-ai-rag
