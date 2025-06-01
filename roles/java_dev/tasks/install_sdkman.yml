@@ -28,3 +28,16 @@
   shell: source {{ ansible_env.HOME }}/.bashrc
   args:
     executable: /bin/bash
+
+- name: Add Java to PATH in .bashrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: |
+      export JAVA_HOME="{{ ansible_env.HOME }}/.sdkman/candidates/java/current"
+      export PATH="$JAVA_HOME/bin:$PATH"
+    create: yes
+
+- name: Source .bashrc to apply JAVA to current session
+  shell: source {{ ansible_env.HOME }}/.bashrc
+  args:
+    executable: /bin/bash
