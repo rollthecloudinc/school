@@ -1,0 +1,14 @@
+---
+# roles/knative/tasks/install_kourier.yml
+- name: Install Kourier Ingress
+  ansible.builtin.shell:
+    cmd: |
+      kubectl apply -f https://github.com/knative/net-kourier/releases/download/{{ knative_version }}/kourier.yaml
+
+- name: Configure Knative to use Kourier
+  ansible.builtin.shell:
+    cmd: |
+      kubectl patch configmap/config-network \
+        --namespace knative-serving \
+        --type merge \
+        --patch '{"data":{"ingress-class":"kourier.ingress.networking.knative.dev"}}'

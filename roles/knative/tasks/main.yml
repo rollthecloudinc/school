@@ -1,2 +1,5 @@
----
-# tasks file for roles/knative
+# roles/knative/tasks/main.yml
+- import_tasks: install_serving.yml
+- import_tasks: install_kourier.yml
+- import_tasks: install_eventing.yml
+- import_tasks: verify_install.yml
