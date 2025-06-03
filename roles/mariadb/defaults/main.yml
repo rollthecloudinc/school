@@ -1,0 +1,6 @@
+---
+# defaults file for roles/mariadb
+mariadb_root_password: "-Password1!"
+mariadb_databases: []
+mariadb_users: []
+mariadb_version: "10.6"

@@ -1,0 +1,26 @@
+- name: Secure MariaDB installation - Set root password
+  ansible.builtin.mysql_user:
+    name: root
+    host: localhost
+    password: "{{ mariadb_root_password }}"
+    check_implicit_admin: true
+
+- name: Remove anonymous users
+  ansible.builtin.mysql_user:
+    name: ''
+    host_all: true
+    state: absent
+
+- name: Remove test database
+  ansible.builtin.mysql_db:
+    name: test
+    state: absent
+
+- name: Reload privilege tables
+  ansible.builtin.mysql_user:
+    name: root
+    host: localhost
+    password: "{{ mariadb_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+    check_implicit_admin: true

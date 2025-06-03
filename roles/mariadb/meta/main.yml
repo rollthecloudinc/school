@@ -1,0 +1,19 @@
+galaxy_info:
+  role_name: mariadb
+  author: Todd Zmijewski
+  description: Install and configure MariaDB on Debian/Ubuntu systems.
+  company: ROLL THE CLOUD INC.
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+    - name: Debian
+      versions:
+        - buster
+        - bullseye
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+  categories:
+    - database
+    - sql

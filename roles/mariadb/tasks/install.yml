@@ -1,0 +1,57 @@
+---
+- name: Ensure required dependencies are installed
+  ansible.builtin.apt:
+    name: ['gnupg', 'software-properties-common', 'lsb-release', 'ca-certificates', 'curl']
+    state: present
+    update_cache: yes
+
+- name: Ensure /etc/apt/keyrings directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download and save MariaDB GPG key
+  ansible.builtin.shell: >
+    curl -fsSL https://mariadb.org/mariadb_release_signing_key.asc |
+    gpg --dearmor -o /etc/apt/keyrings/mariadb-keyring.gpg
+  args:
+    creates: /etc/apt/keyrings/mariadb-keyring.gpg
+  become: true
+
+- name: Check if MariaDB GPG key exists
+  ansible.builtin.stat:
+    path: /etc/apt/keyrings/mariadb-keyring.gpg
+  register: mariadb_key
+
+- name: Fail if MariaDB GPG key is missing
+  ansible.builtin.fail:
+    msg: "MariaDB GPG key was not downloaded or saved correctly!"
+  when: not mariadb_key.stat.exists
+
+- name: Add MariaDB APT repository
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64,arm64,ppc64el signed-by=/etc/apt/keyrings/mariadb-keyring.gpg] http://mirror.mariadb.org/repo/{{ mariadb_version }}/debian bullseye main
+    state: present
+    update_cache: yes
+
+- name: Clean apt cache (optional, to ensure clean state)
+  ansible.builtin.command:
+    cmd: apt-get clean
+  ignore_errors: yes
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install MariaDB server package
+  ansible.builtin.apt:
+    name: mariadb-server
+    state: present
+    update_cache: yes
+
+- name: Ensure MariaDB service is enabled and started
+  ansible.builtin.service:
+    name: mariadb
+    state: started
+    enabled: true
