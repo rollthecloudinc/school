@@ -1,0 +1,3 @@
+---
+# vars file for roles/knative
+knative_version: knative-v1.11.2

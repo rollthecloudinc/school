@@ -1,0 +1,16 @@
+---
+# roles/knative/tasks/install_eventing.yml
+- name: Apply Knative Eventing CRDs
+  ansible.builtin.shell:
+    cmd: |
+      kubectl apply -f https://github.com/knative/eventing/releases/download/{{ knative_version }}/eventing-crds.yaml
+
+- name: Apply Knative Eventing Core
+  ansible.builtin.shell:
+    cmd: |
+      kubectl apply -f https://github.com/knative/eventing/releases/download/{{ knative_version }}/eventing-core.yaml
+
+- name: Install Default Broker
+  ansible.builtin.shell:
+    cmd: |
+      kubectl apply -f https://github.com/knative/eventing/releases/download/{{ knative_version }}/in-memory-channel.yaml

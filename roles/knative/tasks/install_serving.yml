@@ -1,0 +1,11 @@
+---
+# roles/knative/tasks/install_serving.yml
+- name: Apply Knative Serving CRDs
+  ansible.builtin.shell:
+    cmd: |
+      kubectl apply -f https://github.com/knative/serving/releases/download/{{ knative_version }}/serving-crds.yaml
+
+- name: Apply Knative Serving Core
+  ansible.builtin.shell:
+    cmd: |
+      kubectl apply -f https://github.com/knative/serving/releases/download/{{ knative_version }}/serving-core.yaml

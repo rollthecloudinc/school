@@ -1,0 +1,19 @@
+---
+# roles/knative/tasks/verify_install.yml
+- name: Wait for Knative Serving Pods to be Ready
+  ansible.builtin.shell:
+    cmd: kubectl wait --namespace knative-serving --for=condition=Ready pod --timeout=300s --all
+  register: serving_status
+
+- name: Wait for Knative Eventing Pods to be Ready
+  ansible.builtin.shell:
+    cmd: kubectl wait --namespace knative-eventing --for=condition=Ready pod --timeout=300s --all
+  register: eventing_status
+
+- name: Display Knative Serving Pod Status
+  debug:
+    var: serving_status.stdout
+
+- name: Display Knative Eventing Pod Status
+  debug:
+    var: eventing_status.stdout
