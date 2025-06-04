@@ -1,0 +1,6 @@
+---
+- name: Install Bazel bazel from source
+  hosts: all
+  become: yes
+  roles:
+    - bazel_from_source

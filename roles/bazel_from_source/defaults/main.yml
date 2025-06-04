@@ -1,0 +1,6 @@
+---
+# defaults/main.yml
+bazel_version: "6.3.0"  # Version of Bazel to build
+bazel_git_repo: "https://github.com/bazelbuild/bazel.git"  # Bazel Git repository
+bazel_dest_dir: "/tmp/bazel"  # Directory where Bazel source code will be cloned
+bazel_binary_path: "/usr/local/bin/bazel"  # Path to install the Bazel binary

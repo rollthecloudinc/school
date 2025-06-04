@@ -1,0 +1,8 @@
+# tasks/clone_bazel_repo.yml
+---
+
+- name: Clone Bazel source repository
+  git:
+    repo: "{{ bazel_git_repo }}"
+    dest: "{{ bazel_dest_dir }}"
+    update: yes

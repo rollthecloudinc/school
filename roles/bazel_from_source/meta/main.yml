@@ -1,0 +1,27 @@
+# meta/main.yml
+---
+galaxy_info:
+  author: Todd Zmijewski
+  description: Build Bazel from source for ARM-based systems or environments where binaries are unavailable.
+  company: ROLL THE CLOUD INC.
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+        - bullseye
+    - name: Ubuntu
+      versions:
+        - 20.04
+        - 22.04
+  categories:
+    - build
+    - development
+  tags:
+    - bazel
+    - source
+    - raspberry-pi
+    - arm
+    - build-tools
+dependencies: []

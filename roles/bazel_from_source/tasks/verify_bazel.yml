@@ -1,0 +1,10 @@
+# tasks/verify_bazel.yml
+---
+
+- name: Verify Bazel installation from source
+  command: "{{ bazel_binary_path }} --version"
+  register: bazel_version_output
+
+- name: Output installed Bazel version
+  debug:
+    msg: "Bazel built from source and installed successfully. Version: {{ bazel_version_output.stdout }}"

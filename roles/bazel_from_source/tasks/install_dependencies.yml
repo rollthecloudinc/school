@@ -1,0 +1,15 @@
+# tasks/install_dependencies.yml
+---
+
+- name: Install dependencies required to build Bazel from source
+  apt:
+    name:
+      - g++
+      - unzip
+      - zip
+      - python3
+      - git
+      # - openjdk-11-jdk
+      - curl
+    state: present
+    update_cache: yes

@@ -20,5 +20,5 @@
 
 - name: Install Bazel
   apt:
-    name: bazel
+    name: bazel-apt
     state: present

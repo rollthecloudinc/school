@@ -1,0 +1,8 @@
+# tasks/install_bazel.yml
+---
+
+- name: Install Bazel binary compiled from source
+  copy:
+    src: "{{ bazel_dest_dir }}/output/bazel"
+    dest: "{{ bazel_binary_path }}"
+    mode: '0755'

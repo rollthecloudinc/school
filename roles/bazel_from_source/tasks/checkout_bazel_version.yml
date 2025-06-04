@@ -1,0 +1,7 @@
+# tasks/checkout_bazel_version.yml
+---
+
+- name: Checkout Bazel source code for version {{ bazel_version }}
+  command: git checkout tags/{{ bazel_version }} -b {{ bazel_version }}
+  args:
+    chdir: "{{ bazel_dest_dir }}"
