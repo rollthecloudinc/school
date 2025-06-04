@@ -1,2 +1,6 @@
 ---
+# defaults/main.yml
+nvm_version: "v0.39.5"  # Specify the version of NVM to install
+# node_version: "lts/*"   # Specify the Node.js version to install (e.g., lts/*, 16, etc.)
 node_version: "18.17.0"
+nvm_directory: "/usr/local/nvm"  # Directory where NVM will be installed

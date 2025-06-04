@@ -1,30 +1,35 @@
----
-- name: Ensure dependencies are installed
-  apt:
-    name:
-      - curl
-      - build-essential
-      - libssl-dev
-    state: present
-    update_cache: yes
+# tasks/install_nvm.yml
+- name: Create NVM directory
+  ansible.builtin.file:
+    path: "{{ nvm_directory }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
 
-- name: Download and install nvm
-  shell: |
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+- name: Download NVM installation script
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/nvm-sh/nvm/{{ nvm_version }}/install.sh"
+    dest: "/tmp/install_nvm.sh"
+    mode: '0755'
+
+- name: Run NVM installation script
+  ansible.builtin.shell: bash /tmp/install_nvm.sh
   args:
     executable: /bin/bash
-    creates: "{{ ansible_env.HOME }}/.nvm"
+  environment:
+    NVM_DIR: "{{ nvm_directory }}"
 
-- name: Set up nvm environment variables in .bashrc
-  lineinfile:
-    path: "{{ ansible_env.HOME }}/.bashrc"
-    line: |
-      export NVM_DIR="$HOME/.nvm"
-      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-      [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-    create: yes
+- name: Set NVM environment variables system-wide
+  ansible.builtin.copy:
+    content: |
+      export NVM_DIR="{{ nvm_directory }}"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    dest: /etc/profile.d/nvm.sh
+    mode: '0755'
 
-- name: Source .bashrc to apply nvm to current session
-  shell: source {{ ansible_env.HOME }}/.bashrc
+- name: Reload shell profile
+  ansible.builtin.shell: source /etc/profile.d/nvm.sh
   args:
     executable: /bin/bash

@@ -1,19 +1,9 @@
----
-- name: Install Node.js version using nvm
-  shell: |
-    . {{ ansible_env.HOME }}/.bashrc
+# tasks/install_node.yml
+- name: Load NVM and install Node.js
+  ansible.builtin.shell: |
+    export NVM_DIR="{{ nvm_directory }}"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     nvm install {{ node_version }}
-  environment:
-    NVM_DIR: "{{ ansible_env.HOME }}/.nvm"
-  args:
-    executable: /bin/bash
-    creates: "{{ ansible_env.HOME }}/.nvm/versions/node/v{{ node_version }}"
-
-- name: Set default Node.js version using nvm
-  shell: |
-    . {{ ansible_env.HOME }}/.bashrc
     nvm alias default {{ node_version }}
-  environment:
-    NVM_DIR: "{{ ansible_env.HOME }}/.nvm"
   args:
     executable: /bin/bash
