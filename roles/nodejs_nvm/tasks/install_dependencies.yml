@@ -1,0 +1,14 @@
+---
+# tasks/install_dependencies.yml
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - curl
+      - build-essential
+      - libssl-dev
+    state: present
+
