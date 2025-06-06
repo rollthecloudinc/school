@@ -1,7 +1,6 @@
-# tasks/install_dependencies.yml
 ---
 
-- name: Install dependencies required to build Bazel from source
+- name: Install required dependencies for Bazel build
   apt:
     name:
       - g++
@@ -9,7 +8,25 @@
       - zip
       - python3
       - git
-      # - openjdk-11-jdk
-      - curl
+      - openjdk-8-jdk
+      - libprotobuf-java
+      # - libgson-java
+      - libnetty-java
+      - libcommons-lang3-java
+      - libcommons-compress-java
+      #- libvelocity-java
+      - libasm-java
+      #- libjackson-core-java
+      - libxz-java
+      - libguava-java
     state: present
     update_cache: yes
+
+- name: Set JAVA_HOME environment variable
+  lineinfile:
+    path: /etc/environment
+    line: "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64"
+    state: present
+
+- name: Reload environment variables
+  shell: source /etc/environment

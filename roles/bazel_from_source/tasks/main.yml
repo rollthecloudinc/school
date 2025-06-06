@@ -4,11 +4,14 @@
 - name: Install dependencies required to build Bazel from source
   import_tasks: install_dependencies.yml
 
-- name: Clone Bazel source repository
-  import_tasks: clone_bazel_repo.yml
+#- name: Clone Bazel source repository
+#  import_tasks: clone_bazel_repo.yml
 
-- name: Checkout Bazel source code for the specified version
-  import_tasks: checkout_bazel_version.yml
+- name: Download bazel release distro source
+  import_tasks: download_bazel_source.yml
+
+#- name: Checkout Bazel source code for the specified version
+#  import_tasks: checkout_bazel_version.yml
 
 - name: Compile Bazel from source
   import_tasks: build_bazel.yml

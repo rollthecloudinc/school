@@ -1,0 +1,12 @@
+---
+# tasks/download_bazel_source.yml
+- name: Download Bazel distribution archive
+  get_url:
+    url: "https://github.com/bazelbuild/bazel/releases/download/{{ bazel_version }}/bazel-{{ bazel_version }}-dist.zip"
+    dest: "/tmp/bazel-{{ bazel_version }}-dist.zip"
+
+- name: Extract Bazel distribution archive
+  unarchive:
+    src: "/tmp/bazel-{{ bazel_version }}-dist.zip"
+    dest: "{{ bazel_dest_dir }}"
+    remote_src: yes
