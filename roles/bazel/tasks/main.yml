@@ -1,4 +1,4 @@
 ---
 - import_tasks: install_bazel.yml
 - import_tasks: install_gazelle.yml
-- import_tasks: install_vscode_extensions.yml
+#- import_tasks: install_vscode_extensions.yml
