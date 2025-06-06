@@ -7,7 +7,8 @@
 # Task to create the custom data path directory
 - name: Create OpenSearch data path directory
   file:
-    path: /var/opensearch/data
+    #path: /var/opensearch/data
+    path: /home/runner/work/opensearch_data
     state: directory
     #owner: opensearch
     #group: opensearch
@@ -16,7 +17,8 @@
 # Task to create the custom data path directory
 - name: Create OpenSearch logs directory
   file:
-    path: /var/opensearch/logs
+    #path: /var/opensearch/logs
+    path: /home/runner/work/opensearch_logs
     state: directory
     #owner: opensearch
     #group: opensearch
@@ -27,7 +29,7 @@
   lineinfile:
     path: /opt/opensearch-2.19.0/config/opensearch.yml
     regexp: '^path.data:'
-    line: 'path.data: /var/opensearch/data'
+    line: 'path.data: /home/runner/work/opensearch_data'
     state: present
 
 # Task to update the OpenSearch configuration file to set the logs path
@@ -35,7 +37,7 @@
   lineinfile:
     path: /opt/opensearch-2.19.0/config/opensearch.yml
     regexp: '^path.logs:'
-    line: 'path.logs: /var/opensearch/logs'
+    line: 'path.logs: /home/runner/work/opensearch_logs'
     state: present
 
 # Restart OpenSearch to apply configuration changes
