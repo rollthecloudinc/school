@@ -1,4 +1,4 @@
 ---
 - import_tasks: install_gvm.yml
 - import_tasks: install_go.yml
-- import_tasks: install_vscode_extensions.yml
+#- import_tasks: install_vscode_extensions.yml
