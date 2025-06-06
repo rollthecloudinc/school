@@ -1,0 +1,16 @@
+---
+- name: Add Pulumi GPG key
+  shell: |
+    curl -fsSL https://get.pulumi.com/keys/pgp.asc | gpg --dearmor -o /usr/share/keyrings/pulumi-keyring.gpg
+  args:
+    warn: false
+
+- name: Add Pulumi apt repository
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/pulumi-keyring.gpg] https://get.pulumi.com/apt/ stable main"
+    state: present
+
+- name: Install Pulumi
+  apt:
+    name: pulumi
+    state: present
