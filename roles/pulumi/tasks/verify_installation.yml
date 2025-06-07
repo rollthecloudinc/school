@@ -1,0 +1,9 @@
+---
+- name: Verify Pulumi installation
+  command: pulumi version
+  register: pulumi_version_output
+  failed_when: pulumi_version_output.rc != 0
+
+- name: Print Pulumi version
+  debug:
+    msg: "Pulumi version installed: {{ pulumi_version_output.stdout }}"

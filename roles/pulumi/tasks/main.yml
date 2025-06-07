@@ -1,0 +1,5 @@
+---
+# tasks file for roles/pulumi
+- include_tasks: install_dependencies.yml
+- include_tasks: install_pulumi.yml
+- include_tasks: verify_installation.yml
