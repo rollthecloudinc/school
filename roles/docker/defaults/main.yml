@@ -1,0 +1,4 @@
+---
+# defaults file for roles/docker
+docker_package_version: latest
+ansible_user: tzmijewski
