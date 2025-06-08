@@ -1,0 +1,59 @@
+---
+- name: Install CMake
+  hosts: all
+  become: true
+
+  vars:
+    cmake_version: "3.27.6"  # Replace with the desired version
+    cmake_install_from_source: false  # Set to true if you want to build from source
+
+  tasks:
+    - name: Update apt package manager cache
+      apt:
+        update_cache: yes
+
+    - name: Install CMake using package manager
+      apt:
+        name: cmake
+        state: present
+      when: not cmake_install_from_source
+
+    - name: Install prerequisites for building CMake from source
+      apt:
+        name:
+          - build-essential
+          - libssl-dev
+          - wget
+          - tar
+        state: present
+      when: cmake_install_from_source
+
+    - name: Download CMake source archive
+      get_url:
+        url: "https://github.com/Kitware/CMake/releases/download/v{{ cmake_version }}/cmake-{{ cmake_version }}.tar.gz"
+        dest: "/tmp/cmake-{{ cmake_version }}.tar.gz"
+      when: cmake_install_from_source
+
+    - name: Extract CMake source archive
+      ansible.builtin.unarchive:
+        src: "/tmp/cmake-{{ cmake_version }}.tar.gz"
+        dest: "/tmp/"
+        remote_src: yes
+      when: cmake_install_from_source
+
+    - name: Build and install CMake from source
+      shell: |
+        cd /tmp/cmake-{{ cmake_version }}
+        ./bootstrap
+        make -j$(nproc)
+        make install
+      when: cmake_install_from_source
+
+    - name: Verify CMake installation
+      command: cmake --version
+      register: cmake_version_check
+      changed_when: false
+
+    - name: Output CMake version
+      debug:
+        msg: "CMake version installed: {{ cmake_version_check.stdout }}"
